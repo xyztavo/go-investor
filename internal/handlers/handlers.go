@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"teste/cmd/configs"
 	"teste/internal/database"
+	"teste/internal/models"
 	"teste/internal/utils"
 
 	"github.com/go-playground/validator/v10"
@@ -16,11 +17,6 @@ import (
 func HelloWorld(c echo.Context) error {
 	return c.JSON(http.StatusOK,
 		map[string]string{"message": "this is a simple crud project."})
-}
-
-type JwtUserClaims struct {
-	UserId string `json:"userId"`
-	jwt.RegisteredClaims
 }
 
 func CreateUser(c echo.Context) error {
@@ -37,7 +33,7 @@ func CreateUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	// hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 2)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "an error has occurred")
 	}
@@ -48,8 +44,9 @@ func CreateUser(c echo.Context) error {
 	}
 	jwtKey := []byte(configs.GetJwtSecret())
 	// create jwt
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtUserClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, models.JwtUserClaims{
 		UserId: userId,
+		Role:   "investor",
 	})
 	// sign jwt secret
 	signedToken, err := token.SignedString(jwtKey)
@@ -65,16 +62,19 @@ func AuthUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "an error has ocurred")
 	}
+	// get user from db
 	userFromDb, err := database.GetUserById(user.Id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
+	// compare password from req body with the one from database
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userFromDb.Password))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, "password does not match")
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtUserClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, models.JwtUserClaims{
 		UserId: user.Id,
+		Role:   user.Role,
 	})
 	jwtKey := []byte(configs.GetJwtSecret())
 	signedToken, err := token.SignedString(jwtKey)
@@ -101,6 +101,25 @@ func GetUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "user by id not found")
 	}
-	return c.JSON(http.StatusOK, map[string]string{"id": user.Id, "name": user.Name})
+	return c.JSON(http.StatusOK, map[string]string{"id": user.Id, "name": user.Name, "role": user.Role})
+}
 
+func CreateInvestment(c echo.Context) error {
+	investment := new(models.Investments)
+	err := json.NewDecoder(c.Request().Body).Decode(&investment)
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+	user, err := utils.GetClaimsFromToken(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+	}
+	if user.Role != "admin" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "must be admin to view this")
+	}
+	createdInverstmentId, err := database.InsertInvestment(investment.Name, investment.Ticker)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, map[string]string{"createdInvestmentId": createdInverstmentId})
 }
