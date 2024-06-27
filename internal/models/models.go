@@ -13,3 +13,16 @@ type Investments struct {
 	Name   string `json:"name"`
 	Ticker string `json:"ticker"`
 }
+
+type User struct {
+	Id       string `json:"id" validate:"required"`
+	Name     string `json:"name"`
+	Password string `json:"password" validate:"required"`
+	Role     string `json:"role"`
+}
+type CreateUserStruct struct {
+	Id       string `json:"id"`
+	Name     string `json:"name" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Role     string `json:"role"`
+}

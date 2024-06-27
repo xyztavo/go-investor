@@ -21,7 +21,7 @@ func HelloWorld(c echo.Context) error {
 
 func CreateUser(c echo.Context) error {
 	// create var user
-	user := new(database.CreateUserStruct)
+	user := new(models.CreateUserStruct)
 	// decode the req body to the user var
 	err := json.NewDecoder(c.Request().Body).Decode(&user)
 	if err != nil {
@@ -33,7 +33,7 @@ func CreateUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	// hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 2)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "an error has occurred")
 	}
@@ -57,18 +57,23 @@ func CreateUser(c echo.Context) error {
 }
 
 func AuthUser(c echo.Context) error {
-	user := new(database.User)
+	user := new(models.User)
 	err := json.NewDecoder(c.Request().Body).Decode(&user)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "an error has ocurred")
+		return echo.NewHTTPError(http.StatusInternalServerError, "error while decoding json body")
+	}
+	validate := validator.New()
+	// validate the struct
+	if err := validate.Struct(user); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	// get user from db
 	userFromDb, err := database.GetUserById(user.Id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
-	// compare password from req body with the one from database
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userFromDb.Password))
+	// compare hash password with password from db
+	err = bcrypt.CompareHashAndPassword([]byte(userFromDb.Password), []byte(user.Password))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, "password does not match")
 	}

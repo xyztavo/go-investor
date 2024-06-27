@@ -18,6 +18,14 @@ type JwtUserClaims struct {
 
 func GetIdFromToken(c echo.Context) (userId string, err error) {
 	authKey := c.Request().Header.Get("Authorization")
+	if authKey == "" {
+		return "", errors.New("auth token found")
+	}
+	// check if auth type is not bearer
+	authType := strings.Split(authKey, " ")[0]
+	if authType != "Bearer" {
+		return "", errors.New("auth type invalid, expected: Bearer {token}")
+	}
 	jwtFromHeader := strings.Split(authKey, " ")[1]
 	// check if jwt null
 	if jwtFromHeader == "" {
@@ -39,6 +47,9 @@ func GetIdFromToken(c echo.Context) (userId string, err error) {
 
 func GetClaimsFromToken(c echo.Context) (*models.JwtUserClaims, error) {
 	authKey := c.Request().Header.Get("Authorization")
+	if authKey == "" {
+		return nil, errors.New("auth token found")
+	}
 	jwtFromHeader := strings.Split(authKey, " ")[1]
 	// check if jwt null
 	if jwtFromHeader == "" {
