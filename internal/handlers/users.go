@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"teste/cmd/configs"
+	"teste/configs"
 	"teste/internal/database"
 	"teste/internal/models"
 	"teste/internal/utils"

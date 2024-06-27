@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 	"strings"
-	"teste/cmd/configs"
+	"teste/configs"
 	"teste/internal/models"
 
 	"github.com/golang-jwt/jwt/v5"

@@ -3,7 +3,7 @@ package middlewares
 import (
 	"net/http"
 	"strings"
-	"teste/cmd/configs"
+	"teste/configs"
 	"teste/internal/models"
 
 	"github.com/golang-jwt/jwt/v5"

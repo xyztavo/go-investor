@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"teste/cmd/configs"
+	"teste/configs"
 	"teste/internal/database"
 	"teste/internal/routes"
 

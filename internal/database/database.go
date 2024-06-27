@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 	"log"
-	"teste/cmd/configs"
+	"teste/configs"
 
 	_ "github.com/lib/pq"
 )
