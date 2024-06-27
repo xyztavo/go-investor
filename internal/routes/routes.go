@@ -9,6 +9,7 @@ import (
 
 func SetupRoutes(e *echo.Echo) {
 	e.GET("/", handlers.HelloWorld)
+	e.GET("/investments", handlers.GetInvestments)
 	e.POST("/user", handlers.CreateUser)
 	e.GET("/users", handlers.GetUsers)
 	e.POST("/auth", handlers.AuthUser)
@@ -19,4 +20,6 @@ func SetupRoutes(e *echo.Echo) {
 func AuthRequiredRoutes(r *echo.Echo) {
 	// i want this route to use the middlewares.GetAuth
 	r.GET("/user", handlers.GetUser, middlewares.GetAuth)
+	r.POST("/user/admin", handlers.SetAdmin, middlewares.GetAuth)
+	r.POST("/investment", handlers.CreateInvestment, middlewares.AdminAuth)
 }

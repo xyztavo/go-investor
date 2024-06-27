@@ -34,3 +34,11 @@ func GetUsers() (users []models.User, err error) {
 	}
 	return users, nil
 }
+
+func SetAdmin(userId string) error {
+	err := db.QueryRow(`UPDATE users SET role = 'admin' WHERE id = $1`, userId).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}

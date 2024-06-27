@@ -10,8 +10,8 @@ type JwtUserClaims struct {
 
 type Investments struct {
 	Id     string `json:"id"`
-	Name   string `json:"name"`
-	Ticker string `json:"ticker"`
+	Name   string `json:"name" validate:"required"`
+	Ticker string `json:"ticker" validate:"required"`
 }
 
 type User struct {
