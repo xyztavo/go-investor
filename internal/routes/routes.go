@@ -20,6 +20,7 @@ func SetupRoutes(e *echo.Echo) {
 func AuthRequiredRoutes(r *echo.Echo) {
 	// i want this route to use the middlewares.GetAuth
 	r.GET("/user", handlers.GetUser, middlewares.GetAuth)
+	r.POST("/user/credits", handlers.AddUserCredits, middlewares.GetAuth)
 	r.POST("/user/admin", handlers.SetAdmin, middlewares.GetAuth)
 	r.POST("/investment", handlers.CreateInvestment, middlewares.AdminAuth)
 }

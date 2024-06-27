@@ -30,12 +30,19 @@ func Migrate() error {
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(40) NOT NULL,
 		password VARCHAR(200) NOT NULL,
-		role VARCHAR(40) NOT NULL
+		role VARCHAR(40) NOT NULL,
+		credits INT 
 		);
 		CREATE TABLE IF NOT EXISTS investments (
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(40) NOT NULL,
-		ticker VARCHAR(40) NOT NULL
+		ticker VARCHAR(40) NOT NULL,
+		minimum_investment INT NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS users_investments (
+		user_id INT REFERENCES users(id) ON DELETE CASCADE,
+		investment_id INT REFERENCES investments(id) ON DELETE CASCADE,
+		PRIMARY KEY (user_id, investment_id)
 		);
 	`)
 	if err != nil {

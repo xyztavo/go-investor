@@ -52,7 +52,7 @@ func CreateUser(c echo.Context) error {
 }
 
 func AuthUser(c echo.Context) error {
-	user := new(models.User)
+	user := new(models.AuthUser)
 	err := json.NewDecoder(c.Request().Body).Decode(&user)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "error while decoding json body")
@@ -113,4 +113,25 @@ func SetAdmin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "could not make user admin, reason: "+err.Error())
 	}
 	return c.JSON(http.StatusCreated, map[string]string{"message": "user role updated to admin with ease"})
+}
+
+func AddUserCredits(c echo.Context) error {
+	userId, err := utils.GetIdFromToken(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+	}
+	user := new(models.UserCreditsStruct)
+	if err := json.NewDecoder(c.Request().Body).Decode(&user); err != nil {
+		return echo.ErrInternalServerError
+	}
+	validate := validator.New()
+	if err := validate.Struct(user); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	// add credits to user in db
+	newCreditsAmount, err := database.AddCredits(userId, user.Credits)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "could not add credits to user "+err.Error())
+	}
+	return c.JSON(http.StatusOK, map[string]int{"newCreditsAmount": newCreditsAmount})
 }

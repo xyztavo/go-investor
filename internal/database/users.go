@@ -15,7 +15,7 @@ func CreateUser(user *models.CreateUserStruct) (createdUserId string, err error)
 }
 
 func GetUserById(userId string) (user models.User, err error) {
-	err = db.QueryRow("SELECT * FROM users WHERE id = $1", userId).Scan(&user.Id, &user.Name, &user.Password, &user.Role)
+	err = db.QueryRow("SELECT * FROM users WHERE id = $1", userId).Scan(&user.Id, &user.Name, &user.Password, &user.Role, &user.Credits)
 	if err != nil {
 		return user, errors.New("could not find user by id")
 	}
@@ -29,10 +29,17 @@ func GetUsers() (users []models.User, err error) {
 	}
 	for rows.Next() {
 		var user models.User
-		rows.Scan(&user.Id, &user.Name, &user.Password, &user.Role)
+		rows.Scan(&user.Id, &user.Name, &user.Password, &user.Role, &user.Credits)
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+func AddCredits(userId string, credits int) (newUserCredits int, err error) {
+	if err = db.QueryRow("UPDATE users SET credits = $1 WHERE id = $2 RETURNING credits", credits, userId).Scan(&newUserCredits); err != nil {
+		return 0, err
+	}
+	return newUserCredits, nil
 }
 
 func SetAdmin(userId string) error {

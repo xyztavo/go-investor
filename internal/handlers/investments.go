@@ -11,7 +11,7 @@ import (
 )
 
 func CreateInvestment(c echo.Context) error {
-	investment := new(models.Investments)
+	investment := new(models.Investment)
 	if err := json.NewDecoder(c.Request().Body).Decode(&investment); err != nil {
 		return echo.ErrInternalServerError
 	}
@@ -20,7 +20,7 @@ func CreateInvestment(c echo.Context) error {
 	if err := validate.Struct(investment); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	createdInverstmentId, err := database.InsertInvestment(investment.Name, investment.Ticker)
+	createdInverstmentId, err := database.InsertInvestment(investment)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
