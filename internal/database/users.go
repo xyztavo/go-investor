@@ -17,7 +17,7 @@ func CreateUser(user *models.CreateUserStruct) (createdUserId string, err error)
 func GetUserById(userId string) (user models.User, err error) {
 	err = db.QueryRow("SELECT * FROM users WHERE id = $1", userId).Scan(&user.Id, &user.Name, &user.Password, &user.Role, &user.Credits)
 	if err != nil {
-		return user, errors.New("could not find user by id")
+		return user, nil
 	}
 	return user, nil
 }

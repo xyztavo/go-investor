@@ -40,3 +40,8 @@ type CreateUserStruct struct {
 type UserCreditsStruct struct {
 	Credits int `json:"credits" validate:"required"`
 }
+
+type InvestBody struct {
+	Ticker  string `json:"ticker" validate:"required"`
+	Credits int    `json:"credits" validate:"required"`
+}

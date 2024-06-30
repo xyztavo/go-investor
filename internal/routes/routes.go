@@ -23,4 +23,5 @@ func AuthRequiredRoutes(r *echo.Echo) {
 	r.POST("/user/credits", handlers.AddUserCredits, middlewares.GetAuth)
 	r.POST("/user/admin", handlers.SetAdmin, middlewares.GetAuth)
 	r.POST("/investment", handlers.CreateInvestment, middlewares.AdminAuth)
+	r.POST("/user/investment", handlers.Invest, middlewares.GetAuth)
 }

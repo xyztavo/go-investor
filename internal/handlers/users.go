@@ -65,7 +65,7 @@ func AuthUser(c echo.Context) error {
 	// get user from db
 	userFromDb, err := database.GetUserById(user.Id)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "user not found")
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 	// compare hash password with password from db
 	err = bcrypt.CompareHashAndPassword([]byte(userFromDb.Password), []byte(user.Password))
@@ -99,9 +99,9 @@ func GetUser(c echo.Context) error {
 	}
 	user, err := database.GetUserById(idFromToken)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "user by id not found")
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
-	return c.JSON(http.StatusOK, map[string]string{"id": user.Id, "name": user.Name, "role": user.Role})
+	return c.JSON(http.StatusOK, user)
 }
 
 func SetAdmin(c echo.Context) error {

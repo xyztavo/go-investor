@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"teste/internal/database"
 	"teste/internal/models"
+	"teste/internal/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -33,4 +35,45 @@ func GetInvestments(c echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 	return c.JSON(http.StatusOK, investments)
+}
+
+func Invest(c echo.Context) error {
+	// validate stuff
+	id, err := utils.GetIdFromToken(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+	}
+	body := new(models.InvestBody)
+	if err := json.NewDecoder(c.Request().Body).Decode(&body); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	user, err := database.GetUserById(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "could not find user with id "+id)
+	}
+	investment, err := database.GetInvestment(body.Ticker)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "can not find ticker: "+body.Ticker)
+	}
+	if user.Credits < investment.MinimumInvestment {
+		return echo.NewHTTPError(http.StatusBadRequest,
+			fmt.Sprintf(`you only have %v credits but the minimum amount to invest in %v is %v`, user.Credits, investment.Ticker, investment.MinimumInvestment))
+	}
+	if body.Credits < investment.MinimumInvestment {
+		return echo.NewHTTPError(http.StatusBadRequest,
+			fmt.Sprintf(`you want to invest only %v credits but the minimum amount to invest in %v is %v`, user.Credits, investment.Ticker, investment.MinimumInvestment))
+	}
+	// insert and check err
+	if err = database.InsertUserInvestment(user.Id, body.Ticker); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	// remove credits from invested amount and check err
+	if err = database.RemoveUserInvestedCredits(body.Credits, user.Id); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, map[string]string{"message": "invested with ease!"})
 }
