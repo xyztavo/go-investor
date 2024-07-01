@@ -5,7 +5,7 @@ import (
 	"teste/internal/models"
 )
 
-func InsertInvestment(Investment *models.Investment) (createdInvestmentTicker string, err error) {
+func InsertInvestment(Investment *models.CreateInvestment) (createdInvestmentTicker string, err error) {
 	if err = db.QueryRow(`
 	INSERT INTO investments 
 	(name, ticker, minimum_investment) VALUES ($1, $2, $3)
@@ -38,7 +38,7 @@ func GetInvestment(ticker string) (Investment models.Investment, err error) {
 }
 
 func InsertUserInvestment(userId string, ticker string) error {
-	res, err := db.Exec(`INSERT INTO users_investments VALUES($1, $2)`, userId, ticker)
+	res, err := db.Exec(`INSERT INTO users_investments (user_id, ticker) VALUES ($1, $2)`, userId, ticker)
 	if err != nil {
 		return errors.New("could not insert user investment")
 	}

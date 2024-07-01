@@ -16,7 +16,7 @@ import (
 
 func CreateUser(c echo.Context) error {
 	// create var user
-	user := new(models.CreateUserStruct)
+	user := new(models.CreateUser)
 	// decode the req body to the user var
 	err := json.NewDecoder(c.Request().Body).Decode(&user)
 	if err != nil {
@@ -120,7 +120,7 @@ func AddUserCredits(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
-	user := new(models.UserCreditsStruct)
+	user := new(models.UserCredits)
 	if err := json.NewDecoder(c.Request().Body).Decode(&user); err != nil {
 		return echo.ErrInternalServerError
 	}

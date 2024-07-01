@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"teste/internal/database"
 	"teste/internal/models"
 	"teste/internal/utils"
@@ -12,12 +13,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func validateNoSpaces(fl validator.FieldLevel) bool {
+	value := fl.Field().String()
+	return !strings.Contains(value, " ")
+}
+
 func CreateInvestment(c echo.Context) error {
-	investment := new(models.Investment)
+	investment := new(models.CreateInvestment)
 	if err := json.NewDecoder(c.Request().Body).Decode(&investment); err != nil {
 		return echo.ErrInternalServerError
 	}
 	validate := validator.New()
+	validate.RegisterValidation("noSpaces", validateNoSpaces)
 	// validate the struct
 	if err := validate.Struct(investment); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -76,4 +83,12 @@ func Invest(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, map[string]string{"message": "invested with ease!"})
+}
+
+func GetUsersInvestments(c echo.Context) error {
+	investments, err := database.GetUsersInvestments()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, investments)
 }

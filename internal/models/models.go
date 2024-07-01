@@ -9,10 +9,9 @@ type JwtUserClaims struct {
 }
 
 type Investment struct {
-	Id                string `json:"id"`
-	Name              string `json:"name" validate:"required"`
-	Ticker            string `json:"ticker" validate:"required"`
-	MinimumInvestment int    `json:"minimumInvestment" validate:"required"`
+	Name              string `json:"name"`
+	Ticker            string `json:"ticker"`
+	MinimumInvestment int    `json:"minimumInvestment"`
 }
 
 type User struct {
@@ -22,26 +21,9 @@ type User struct {
 	Role     string `json:"role"`
 	Credits  int    `json:"credits"`
 }
-type AuthUser struct {
-	Id       string `json:"id" validate:"required"`
-	Name     string `json:"name"`
-	Password string `json:"password" validate:"required"`
-	Role     string `json:"role"`
-	Credits  int    `json:"credits"`
-}
-type CreateUserStruct struct {
-	Id       string `json:"id"`
-	Name     string `json:"name" validate:"required"`
-	Password string `json:"password" validate:"required"`
-	Role     string `json:"role"`
-	Credits  int    `json:"credits"`
-}
 
-type UserCreditsStruct struct {
-	Credits int `json:"credits" validate:"required"`
-}
-
-type InvestBody struct {
-	Ticker  string `json:"ticker" validate:"required"`
-	Credits int    `json:"credits" validate:"required"`
+type UsersInvestments struct {
+	UserInvestmentId string `json:"userInvestmentId"`
+	UserId           string `json:"userId"`
+	Ticker           string `json:"ticker"`
 }

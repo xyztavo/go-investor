@@ -39,9 +39,9 @@ func Migrate() error {
 		minimum_investment INT NOT NULL
 		);
 		CREATE TABLE IF NOT EXISTS users_investments (
+		user_invesment_id SERIAL PRIMARY KEY, 
 		user_id INT REFERENCES users(id) ON DELETE CASCADE,
-		ticker VARCHAR(40) REFERENCES investments(ticker) ON DELETE CASCADE,
-		PRIMARY KEY (user_id, ticker)
+		ticker VARCHAR(40) REFERENCES investments(ticker) ON DELETE CASCADE
 		);
 	`)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"teste/internal/models"
 )
 
-func CreateUser(user *models.CreateUserStruct) (createdUserId string, err error) {
+func CreateUser(user *models.CreateUser) (createdUserId string, err error) {
 	// this will always create a user with a investor role
 	err = db.QueryRow("INSERT INTO users (name, password, role) VALUES ($1, $2, $3) RETURNING id", user.Name, user.Password, "investor").Scan(&createdUserId)
 	if err != nil {
