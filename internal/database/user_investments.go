@@ -12,7 +12,7 @@ func GetUsersInvestments() (investments []models.UsersInvestments, err error) {
 	}
 	var investment models.UsersInvestments
 	for rows.Next() {
-		rows.Scan(&investment.UserInvestmentId, &investment.UserId, &investment.Ticker)
+		rows.Scan(&investment.UserInvestmentId, &investment.UserId, &investment.Ticker, &investment.Amount)
 		investments = append(investments, investment)
 	}
 	if err := rows.Err(); err != nil {

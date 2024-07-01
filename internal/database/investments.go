@@ -37,8 +37,8 @@ func GetInvestment(ticker string) (Investment models.Investment, err error) {
 	return Investment, err
 }
 
-func InsertUserInvestment(userId string, ticker string) error {
-	res, err := db.Exec(`INSERT INTO users_investments (user_id, ticker) VALUES ($1, $2)`, userId, ticker)
+func InsertUserInvestment(userId string, ticker string, amount int) error {
+	res, err := db.Exec(`INSERT INTO users_investments (user_id, ticker, amount) VALUES ($1, $2, $3)`, userId, ticker, amount)
 	if err != nil {
 		return errors.New("could not insert user investment")
 	}

@@ -26,4 +26,5 @@ type UsersInvestments struct {
 	UserInvestmentId string `json:"userInvestmentId"`
 	UserId           string `json:"userId"`
 	Ticker           string `json:"ticker"`
+	Amount           int    `json:"amount"`
 }

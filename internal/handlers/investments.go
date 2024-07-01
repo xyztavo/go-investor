@@ -75,7 +75,7 @@ func Invest(c echo.Context) error {
 			fmt.Sprintf(`you want to invest only %v credits but the minimum amount to invest in %v is %v`, user.Credits, investment.Ticker, investment.MinimumInvestment))
 	}
 	// insert and check err
-	if err = database.InsertUserInvestment(user.Id, body.Ticker); err != nil {
+	if err = database.InsertUserInvestment(user.Id, body.Ticker, body.Credits); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	// remove credits from invested amount and check err
