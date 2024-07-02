@@ -72,7 +72,7 @@ func Invest(c echo.Context) error {
 	}
 	if body.Credits < investment.MinimumInvestment {
 		return echo.NewHTTPError(http.StatusBadRequest,
-			fmt.Sprintf(`you want to invest only %v credits but the minimum amount to invest in %v is %v`, user.Credits, investment.Ticker, investment.MinimumInvestment))
+			fmt.Sprintf(`you want to invest only %v credits but the minimum amount to invest in %v is %v`, body.Credits, investment.Ticker, investment.MinimumInvestment))
 	}
 	// insert and check err
 	if err = database.InsertUserInvestment(user.Id, body.Ticker, body.Credits); err != nil {

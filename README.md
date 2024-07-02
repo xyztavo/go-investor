@@ -6,3 +6,5 @@ this is a project that uses Go, Echo and Postgres to simulate investing. Auth us
 - [ ] investment leverage that changes (randomly for now) every day (also create a newday route)
 - [ ] swagger (with swaggo maybe)
 - [ ] official V1 release with code refactor to use dependency injection and interfaces for better code mantainability
+
+

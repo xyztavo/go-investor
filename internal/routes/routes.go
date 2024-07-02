@@ -14,6 +14,7 @@ func SetupRoutes(e *echo.Echo) {
 	e.POST("/auth", handlers.AuthUser)
 
 	AuthRequiredRoutes(e)
+	AdminRoutes(e)
 }
 
 func AuthRequiredRoutes(e *echo.Echo) {
@@ -24,7 +25,6 @@ func AuthRequiredRoutes(e *echo.Echo) {
 
 	// !!!! THIS ROUTE GRANTS ADMIN ACCESS TO ANY AUTHENTICATED USER
 	e.POST("/user/admin", handlers.SetAdmin, middlewares.GetAuth)
-	AdminRoutes(e)
 }
 
 func AdminRoutes(e *echo.Echo) {
