@@ -23,3 +23,13 @@ type InvestBody struct {
 	Ticker  string `json:"ticker" validate:"required"`
 	Credits int    `json:"credits" validate:"required"`
 }
+
+type DeleteInvestment struct {
+	Ticker string `json:"ticker" validate:"required"`
+}
+
+type UpdateInvestment struct {
+	Ticker            string `json:"ticker"`
+	Name              string `json:"name"`
+	MinimumInvestment int    `json:"minimumInvestment" validate:"required"`
+}

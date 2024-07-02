@@ -52,6 +52,36 @@ func InsertUserInvestment(userId string, ticker string, amount int) error {
 	return nil
 }
 
+func RemoveInvestment(ticker string) error {
+	res, err := db.Exec("DELETE FROM investments WHERE ticker = $1", ticker)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected < 1 {
+		return errors.New("could not delete investment")
+	}
+	return nil
+}
+
+func UpdateInvestment(updateInvestmentBody *models.UpdateInvestment) error {
+	res, err := db.Exec("UPDATE investments SET name = $1, minimum_investment = $2 WHERE ticker = $3", updateInvestmentBody.Name, updateInvestmentBody.MinimumInvestment, updateInvestmentBody.Ticker)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected < 1 {
+		return errors.New("could not update investment")
+	}
+	return nil
+}
+
 func RemoveUserInvestedCredits(amount int, userId string) error {
 	res, err := db.Exec("UPDATE users SET credits = credits - $1 WHERE id = $2", amount, userId)
 	if err != nil {

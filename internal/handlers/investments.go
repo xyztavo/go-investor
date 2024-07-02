@@ -92,3 +92,35 @@ func GetUsersInvestments(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, investments)
 }
+
+func DeleteInvestments(c echo.Context) error {
+	tickerBody := new(models.DeleteInvestment)
+	if err := json.NewDecoder(c.Request().Body).Decode(&tickerBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	validate := validator.New()
+	if err := validate.Struct(tickerBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := database.RemoveInvestment(tickerBody.Ticker); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "could not remove investment")
+	}
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "investment deleted with ease",
+	})
+}
+
+func UpdateInvestments(c echo.Context) error {
+	updateInvestmentBody := new(models.UpdateInvestment)
+	if err := json.NewDecoder(c.Request().Body).Decode(&updateInvestmentBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	validate := validator.New()
+	if err := validate.Struct(updateInvestmentBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := database.UpdateInvestment(updateInvestmentBody); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "could not find ticker "+updateInvestmentBody.Ticker)
+	}
+	return c.JSON(http.StatusOK, map[string]string{"message": "investment updated with ease!"})
+}

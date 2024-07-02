@@ -1,8 +1,8 @@
 ## Desc
-this is a project that uses Go, Echo and Postgres to CRUD and auth users (investors) and role-based authorization to CRUD and buy investments. uses JWT for tokens and JSON req and res body.
+this is a project that uses Go, Echo and Postgres to simulate investing. Auth users (investors) and role-based authorization to CRUD investments. uses JWT for tokens and JSON req and res body. 0.0.1
 
 ## Todo
-- [x] also show amount in users investments
-- [ ] remove, update investment 
-- [ ] create a factor of the investment that changes every day (also create a newday route)
+- [x] remove, update investment 
+- [ ] investment leverage that changes (randomly for now) every day (also create a newday route)
+- [ ] swagger (with swaggo maybe)
 - [ ] official V1 release with code refactor to use dependency injection and interfaces for better code mantainability
